@@ -392,6 +392,47 @@ function viewEmployeesByDepartment() {
     });
 }
 
+function deleteFromDatabase() {
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'choice',
+            message: 'What do you want to delete?',
+            choices: ['Department', 'Role', 'Employee', 'Back to Main Menu']
+        }
+    ]).then(answer => {
+        switch (answer.choice) {
+            case 'Department':
+                // Call a function to handle deleting a department
+                deleteDepartment();
+                break;
+            case 'Role':
+                // Call a function to handle deleting a role
+                deleteRole();
+                break;
+            case 'Employee':
+                // Call a function to handle deleting an employee
+                deleteEmployee();
+                break;
+            case 'Back to Main Menu':
+                mainMenu();
+                break;
+        }
+    });
+}
+
+function deleteDepartment() {
+    // Implement the functionality here
+}
+
+function deleteRole() {
+    // Implement the functionality here
+}
+
+function deleteEmployee() {
+    // Implement the functionality here
+}
+
 
 function mainMenu() {
     inquirer.prompt([
