@@ -220,7 +220,10 @@ function mainMenu() {
                 'View All Departments',
                 'View All Roles',
                 'View All Employees',
-                // ... add other choices if needed
+                'Add Department',
+                'Add Role',
+                'Add Employee',
+                'Update Employee Role',
                 'Exit'
             ]
         }
@@ -235,10 +238,22 @@ function mainMenu() {
             case 'View All Employees':
                 viewAllEmployees();
                 break;
-            // Handle other choices similarly, if added
+            case 'Add Department':
+                addDepartment();
+                break;
+            case 'Add Role':
+                addRole();
+                break;
+            case 'Add Employee':
+                addEmployee();
+                break;
+            case 'Update Employee Role':
+                updateEmployeeRole();
+                break;
             case 'Exit':
                 connection.end();
                 break;
         }
     });
 }
+
