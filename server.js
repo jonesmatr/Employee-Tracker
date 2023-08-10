@@ -1,6 +1,11 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 
+const padString = (str, length) => str + ' '.repeat(length - str.length);
+const createDashedLine = (colWidths) => {
+    return colWidths.map(width => '-'.repeat(width - 1)).join(' ');
+};
+
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -23,12 +28,10 @@ function viewAllDepartments() {
         const colWidths = headers.map((header, index) => {
             const maxDataLength = Math.max(...results.map(result => String(result[header.toLowerCase()]).length));
             return Math.max(header.length, maxDataLength) + 2;
-        });
+        });        
 
-        const padString = (str, length) => str + ' '.repeat(length - str.length);
-
-        console.log(headers.map((header, index) => padString(header, colWidths[index])).join(''));
-        console.log(colWidths.map(width => '-'.repeat(width)).join(''));
+        console.log(headers.map((header, index) => padString(header, colWidths[index])).join(' '));
+        console.log(createDashedLine(colWidths));
 
         results.forEach(result => {
             const row = [result.id, result.name];
@@ -116,8 +119,8 @@ function viewAllRoles() {
 
         const padString = (str, length) => str + ' '.repeat(length - str.length);
 
-        console.log(headers.map((header, index) => padString(header, colWidths[index])).join(''));
-        console.log(colWidths.map(width => '-'.repeat(width)).join(''));
+        console.log(headers.map((header, index) => padString(header, colWidths[index])).join(' '));
+        console.log(createDashedLine(colWidths));
 
         results.forEach(result => {
             const row = [result.id, result.title, result.salary, result.department];
@@ -145,29 +148,28 @@ function viewAllEmployees() {
         LEFT JOIN department ON role.department_id = department.id
         LEFT JOIN employee m ON e.manager_id = m.id
     `;
+
     connection.query(query, (err, results) => {
         if (err) throw err;
 
-        // Define headers
         const headers = ['ID', 'First Name', 'Last Name', 'Role', 'Department', 'Salary', 'Manager'];
 
-        // Find the maximum width for each column
+        // Calculate column widths based on the maximum length of data in each column
         const colWidths = headers.map((header, index) => {
-            // Get maximum length of data in this column
-            const maxDataLength = Math.max(...results.map(result => String(result[header.toLowerCase().replace(' ', '_')]).length));
-            return Math.max(header.length, maxDataLength) + 2;  // Add 2 for a bit of padding
+            const headerLength = header.length;
+
+            // Find the longest piece of data in this column
+            const maxDataLength = results.reduce((max, row) => {
+                const field = header.toLowerCase().replace(' ', '_');
+                return Math.max(max, String(row[field]).length);
+            }, 0);
+
+            return Math.max(headerLength, maxDataLength) + 2;  // Add 2 for padding
         });
 
-        // Helper function to pad strings for display
-        const padString = (str, length) => str + ' '.repeat(length - str.length);
+        console.log(headers.map((header, index) => padString(header, colWidths[index])).join(' '));
+        console.log(colWidths.map(width => '-'.repeat(width)).join(' '));
 
-        // Display headers
-        console.log(headers.map((header, index) => padString(header, colWidths[index])).join(''));
-
-        // Display line under headers
-        console.log(colWidths.map(width => '-'.repeat(width)).join(''));
-
-        // Display data
         results.forEach(result => {
             const row = [
                 result.id,
@@ -178,12 +180,13 @@ function viewAllEmployees() {
                 result.salary,
                 result.manager || 'None'
             ];
-            console.log(row.map((item, index) => padString(String(item), colWidths[index])).join(''));
+            console.log(row.map((item, index) => padString(String(item), colWidths[index])).join(' '));
         });
 
         mainMenu();
     });
 }
+
 
 
 
