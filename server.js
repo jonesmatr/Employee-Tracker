@@ -440,9 +440,28 @@ function deleteDepartment() {
     });
 }
 
-
 function deleteRole() {
-    // Implement the functionality here
+    connection.query('SELECT * FROM role', (err, roles) => {
+        if (err) throw err;
+
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'roleId',
+                message: 'Which role would you like to delete?',
+                choices: roles.map(role => ({
+                    name: role.title,
+                    value: role.id
+                }))
+            }
+        ]).then(answer => {
+            connection.query('DELETE FROM role WHERE id = ?', [answer.roleId], (err, result) => {
+                if (err) throw err;
+                console.log('Role deleted successfully!');
+                mainMenu();
+            });
+        });
+    });
 }
 
 function deleteEmployee() {
