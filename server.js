@@ -433,6 +433,37 @@ function deleteEmployee() {
     // Implement the functionality here
 }
 
+function viewDepartmentBudget() {
+    connection.query('SELECT id, name FROM department', (err, departments) => {
+        if (err) throw err;
+
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'departmentId',
+                message: 'For which department do you want to view the utilized budget?',
+                choices: departments.map(dept => ({
+                    name: dept.name,
+                    value: dept.id
+                }))
+            }
+        ]).then(answer => {
+            const query = `
+                SELECT SUM(r.salary) AS budget 
+                FROM employee e
+                JOIN role r ON e.role_id = r.id
+                WHERE r.department_id = ?
+            `;
+
+            connection.query(query, [answer.departmentId], (err, result) => {
+                if (err) throw err;
+                console.log(`Total utilized budget for the department: $${result[0].budget}`);
+                mainMenu();
+            });
+        });
+    });
+}
+
 
 function mainMenu() {
     inquirer.prompt([
