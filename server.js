@@ -9,7 +9,7 @@ const createDashedLine = (colWidths) => {
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    database: 'employee_tracker' 
+    database: 'employee_tracker'
 });
 
 // ... Your other imports and setups ...
@@ -30,7 +30,7 @@ console.log(`
                             __/ |                
                            |___/                 
 `);
-  
+
 connection.connect((err) => {
     if (err) throw err;
     console.log('Connected to the database.');
@@ -47,7 +47,7 @@ function viewAllDepartments() {
         const colWidths = headers.map((header, index) => {
             const maxDataLength = Math.max(...results.map(result => String(result[header.toLowerCase()]).length));
             return Math.max(header.length, maxDataLength) + 2;
-        });        
+        });
 
         console.log(headers.map((header, index) => padString(header, colWidths[index])).join(' '));
         console.log(createDashedLine(colWidths));
@@ -123,14 +123,14 @@ function addRole() {
 // Function to view all roles
 function viewAllRoles() {
     const query = `
-        SELECT role.id, role.title, role.salary, department.name AS department 
+        SELECT role.id, role.title, department.name AS department, role.salary  
         FROM role 
         LEFT JOIN department ON role.department_id = department.id
     `;
     connection.query(query, (err, results) => {
         if (err) throw err;
 
-        const headers = ['ID', 'Title', 'Salary', 'Department'];
+        const headers = ['ID', 'Title', 'Department', 'Salary'];
         const colWidths = headers.map((header, index) => {
             const maxDataLength = Math.max(...results.map(result => String(result[header.toLowerCase().replace(' ', '_')]).length));
             return Math.max(header.length, maxDataLength) + 2;
@@ -142,7 +142,7 @@ function viewAllRoles() {
         console.log(createDashedLine(colWidths));
 
         results.forEach(result => {
-            const row = [result.id, result.title, result.salary, result.department];
+            const row = [result.id, result.title,result.department, result.salary ];
             console.log(row.map((item, index) => padString(String(item), colWidths[index])).join(''));
         });
 
@@ -158,7 +158,7 @@ function viewAllEmployees() {
             e.id, 
             e.first_name, 
             e.last_name, 
-            role.title AS role, 
+            role.title, 
             department.name AS department, 
             role.salary, 
             CONCAT(m.first_name, ' ', m.last_name) AS manager 
@@ -171,7 +171,7 @@ function viewAllEmployees() {
     connection.query(query, (err, results) => {
         if (err) throw err;
 
-        const headers = ['ID', 'First Name', 'Last Name', 'Role', 'Department', 'Salary', 'Manager'];
+        const headers = ['ID', 'First Name', 'Last Name', 'Title', 'Department', 'Salary', 'Manager'];
 
         // Calculate column widths based on the maximum length of data in each column
         const colWidths = headers.map((header, index) => {
@@ -194,7 +194,7 @@ function viewAllEmployees() {
                 result.id,
                 result.first_name,
                 result.last_name,
-                result.role,
+                result.title,
                 result.department,
                 result.salary,
                 result.manager || 'None'
