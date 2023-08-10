@@ -301,6 +301,40 @@ function updateEmployeeRole() {
     });
 }
 
+function updateEmployeeManager() {
+    // First, we need to get a list of employees
+    connection.query('SELECT id, CONCAT(first_name, " ", last_name) AS name FROM employee', (err, employees) => {
+        if (err) throw err;
+
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'employeeId',
+                message: 'Which employee\'s manager do you want to update?',
+                choices: employees.map(employee => ({
+                    name: employee.name,
+                    value: employee.id
+                }))
+            },
+            {
+                type: 'list',
+                name: 'managerId',
+                message: 'Who is the employee\'s new manager?',
+                choices: employees.map(employee => ({
+                    name: employee.name,
+                    value: employee.id
+                })).concat({ name: "None", value: null })  // Allow setting no manager
+            }
+        ]).then(answers => {
+            connection.query('UPDATE employee SET manager_id = ? WHERE id = ?', [answers.managerId, answers.employeeId], (err) => {
+                if (err) throw err;
+                console.log('Updated employee\'s manager.');
+                mainMenu();
+            });
+        });
+    });
+}
+
 
 function mainMenu() {
     inquirer.prompt([
