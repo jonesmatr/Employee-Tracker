@@ -332,7 +332,7 @@ function updateEmployeeManager() {
 
 function viewEmployeesByManager() {
     // First, we need to get a list of managers
-    connection.query('SELECT DISTINCT manager_id, CONCAT(m.first_name, " ", m.last_name) AS manager_name FROM employee e JOIN employee m ON e.manager_id = m.id WHERE manager_id IS NOT NULL', (err, managers) => {
+    connection.query('SELECT DISTINCT e.manager_id, CONCAT(m.first_name, " ", m.last_name) AS manager_name FROM employee e JOIN employee m ON e.manager_id = m.id WHERE e.manager_id IS NOT NULL', (err, managers) => {
         if (err) throw err;
 
         inquirer.prompt([
