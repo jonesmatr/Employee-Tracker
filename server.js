@@ -22,7 +22,42 @@ function viewAllDepartments() {
     });
 }
 
-// You can create similar functions for viewAllRoles, viewAllEmployees, etc.
+// Function to view all roles
+function viewAllRoles() {
+    const query = `
+        SELECT role.id, role.title, role.salary, department.name AS department 
+        FROM role 
+        LEFT JOIN department ON role.department_id = department.id
+    `;
+    connection.query(query, (err, results) => {
+        if (err) throw err;
+        console.table(results);
+        // Return to main menu or exit
+    });
+}
+
+// Function to view all employees
+function viewAllEmployees() {
+    const query = `
+        SELECT 
+            e.id, 
+            e.first_name, 
+            e.last_name, 
+            role.title AS role, 
+            department.name AS department, 
+            role.salary, 
+            CONCAT(m.first_name, ' ', m.last_name) AS manager 
+        FROM employee e
+        LEFT JOIN role ON e.role_id = role.id
+        LEFT JOIN department ON role.department_id = department.id
+        LEFT JOIN employee m ON e.manager_id = m.id
+    `;
+    connection.query(query, (err, results) => {
+        if (err) throw err;
+        console.table(results);
+        // Return to main menu or exit
+    });
+}
 
 function mainMenu() {
     inquirer.prompt([
@@ -34,7 +69,7 @@ function mainMenu() {
                 'View All Departments',
                 'View All Roles',
                 'View All Employees',
-                // ... add other choices
+                // ... add other choices if needed
                 'Exit'
             ]
         }
@@ -43,7 +78,13 @@ function mainMenu() {
             case 'View All Departments':
                 viewAllDepartments();
                 break;
-            // Handle other choices similarly
+            case 'View All Roles':
+                viewAllRoles();
+                break;
+            case 'View All Employees':
+                viewAllEmployees();
+                break;
+            // Handle other choices similarly, if added
             case 'Exit':
                 connection.end();
                 break;
