@@ -117,6 +117,99 @@ function viewAllEmployees() {
     });
 }
 
+// Function to add an employee
+function addEmployee() {
+    // Fetch available roles and employees (for manager selection)
+    let roles;
+    let employees;
+    connection.query('SELECT * FROM role', (err, roleResults) => {
+        if (err) throw err;
+        roles = roleResults;
+        connection.query('SELECT * FROM employee', (err, employeeResults) => {
+            if (err) throw err;
+            employees = employeeResults;
+            inquirer.prompt([
+                {
+                    type: 'input',
+                    name: 'firstName',
+                    message: 'Enter the first name of the employee:',
+                    validate: name => name ? true : "Name cannot be empty."
+                },
+                {
+                    type: 'input',
+                    name: 'lastName',
+                    message: 'Enter the last name of the employee:',
+                    validate: name => name ? true : "Name cannot be empty."
+                },
+                {
+                    type: 'list',
+                    name: 'role',
+                    message: 'Select the role for this employee:',
+                    choices: roles.map(role => ({ name: role.title, value: role.id }))
+                },
+                {
+                    type: 'list',
+                    name: 'manager',
+                    message: 'Select the manager for this employee:',
+                    choices: [...employees.map(emp => ({ name: `${emp.first_name} ${emp.last_name}`, value: emp.id })), { name: 'None', value: null }]
+                }
+            ]).then(answer => {
+                connection.query('INSERT INTO employee SET ?', {
+                    first_name: answer.firstName,
+                    last_name: answer.lastName,
+                    role_id: answer.role,
+                    manager_id: answer.manager
+                }, (err) => {
+                    if (err) throw err;
+                    console.log('Employee added successfully.');
+                    // Return to main menu or exit
+                    mainMenu();
+                });
+            });
+        });
+    });
+}
+
+// Function to update an employee's role
+function updateEmployeeRole() {
+    // Fetch employees and roles
+    let employees;
+    let roles;
+    connection.query('SELECT * FROM employee', (err, employeeResults) => {
+        if (err) throw err;
+        employees = employeeResults;
+        connection.query('SELECT * FROM role', (err, roleResults) => {
+            if (err) throw err;
+            roles = roleResults;
+            inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'employee',
+                    message: 'Select an employee to update:',
+                    choices: employees.map(emp => ({ name: `${emp.first_name} ${emp.last_name}`, value: emp.id }))
+                },
+                {
+                    type: 'list',
+                    name: 'role',
+                    message: 'Select the new role for this employee:',
+                    choices: roles.map(role => ({ name: role.title, value: role.id }))
+                }
+            ]).then(answer => {
+                connection.query('UPDATE employee SET ? WHERE ?', [
+                    { role_id: answer.role },
+                    { id: answer.employee }
+                ], (err) => {
+                    if (err) throw err;
+                    console.log('Employee role updated successfully.');
+                    // Return to main menu or exit
+                    mainMenu();
+                });
+            });
+        });
+    });
+}
+
+
 function mainMenu() {
     inquirer.prompt([
         {
