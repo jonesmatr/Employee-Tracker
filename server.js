@@ -22,6 +22,64 @@ function viewAllDepartments() {
     });
 }
 
+// Function to add a department
+function addDepartment() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'name',
+            message: 'Enter the name of the new department:',
+            validate: name => name ? true : "Name cannot be empty."
+        }
+    ]).then(answer => {
+        connection.query('INSERT INTO department SET ?', { name: answer.name }, (err) => {
+            if (err) throw err;
+            console.log('Department added successfully.');
+            // Return to main menu or exit
+            mainMenu();
+        });
+    });
+}
+
+// Function to add a role
+function addRole() {
+    // First, fetch the list of departments
+    connection.query('SELECT * FROM department', (err, departments) => {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type: 'input',
+                name: 'title',
+                message: 'Enter the title of the new role:',
+                validate: title => title ? true : "Title cannot be empty."
+            },
+            {
+                type: 'input',
+                name: 'salary',
+                message: 'Enter the salary for this role:',
+                validate: salary => !isNaN(salary) ? true : "Please enter a valid number."
+            },
+            {
+                type: 'list',
+                name: 'department',
+                message: 'Select the department for this role:',
+                choices: departments.map(dept => ({ name: dept.name, value: dept.id }))
+            }
+        ]).then(answer => {
+            connection.query('INSERT INTO role SET ?', {
+                title: answer.title,
+                salary: answer.salary,
+                department_id: answer.department
+            }, (err) => {
+                if (err) throw err;
+                console.log('Role added successfully.');
+                // Return to main menu or exit
+                mainMenu();
+            });
+        });
+    });
+}
+
 // Function to view all roles
 function viewAllRoles() {
     const query = `
