@@ -19,6 +19,7 @@ function viewAllDepartments() {
         if (err) throw err;
         console.table(results);
         // Return to main menu or exit
+        mainMenu();
     });
 }
 
@@ -91,6 +92,7 @@ function viewAllRoles() {
         if (err) throw err;
         console.table(results);
         // Return to main menu or exit
+        mainMenu();
     });
 }
 
@@ -114,6 +116,7 @@ function viewAllEmployees() {
         if (err) throw err;
         console.table(results);
         // Return to main menu or exit
+        mainMenu();
     });
 }
 
