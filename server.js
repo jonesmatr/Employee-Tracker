@@ -15,13 +15,30 @@ connection.connect((err) => {
 
 // Function to view all departments
 function viewAllDepartments() {
-    connection.query('SELECT * FROM department', (err, results) => {
+    const query = 'SELECT * FROM department';
+    connection.query(query, (err, results) => {
         if (err) throw err;
-        console.table(results);
-        // Return to main menu or exit
+
+        const headers = ['ID', 'Name'];
+        const colWidths = headers.map((header, index) => {
+            const maxDataLength = Math.max(...results.map(result => String(result[header.toLowerCase()]).length));
+            return Math.max(header.length, maxDataLength) + 2;
+        });
+
+        const padString = (str, length) => str + ' '.repeat(length - str.length);
+
+        console.log(headers.map((header, index) => padString(header, colWidths[index])).join(''));
+        console.log(colWidths.map(width => '-'.repeat(width)).join(''));
+
+        results.forEach(result => {
+            const row = [result.id, result.name];
+            console.log(row.map((item, index) => padString(String(item), colWidths[index])).join(''));
+        });
+
         mainMenu();
     });
 }
+
 
 // Function to add a department
 function addDepartment() {
@@ -90,18 +107,27 @@ function viewAllRoles() {
     `;
     connection.query(query, (err, results) => {
         if (err) throw err;
-       // Header
-       console.log('ID\tTitle\t\tSalary\tDepartment');
-       console.log('----------------------------------------');
 
-       // Data
-       results.forEach(result => {
-           console.log(`${result.id}\t${result.title}\t${result.salary}\t${result.department}`);
-       });
-        // Return to main menu or exit
+        const headers = ['ID', 'Title', 'Salary', 'Department'];
+        const colWidths = headers.map((header, index) => {
+            const maxDataLength = Math.max(...results.map(result => String(result[header.toLowerCase().replace(' ', '_')]).length));
+            return Math.max(header.length, maxDataLength) + 2;
+        });
+
+        const padString = (str, length) => str + ' '.repeat(length - str.length);
+
+        console.log(headers.map((header, index) => padString(header, colWidths[index])).join(''));
+        console.log(colWidths.map(width => '-'.repeat(width)).join(''));
+
+        results.forEach(result => {
+            const row = [result.id, result.title, result.salary, result.department];
+            console.log(row.map((item, index) => padString(String(item), colWidths[index])).join(''));
+        });
+
         mainMenu();
     });
 }
+
 
 // Function to view all employees
 function viewAllEmployees() {
