@@ -61,7 +61,6 @@ function viewAllDepartments() {
     });
 }
 
-
 // Function to add a department
 function addDepartment() {
     inquirer.prompt([
@@ -142,14 +141,13 @@ function viewAllRoles() {
         console.log(createDashedLine(colWidths));
 
         results.forEach(result => {
-            const row = [result.id, result.title,result.department, result.salary ];
+            const row = [result.id, result.title, result.department, result.salary];
             console.log(row.map((item, index) => padString(String(item), colWidths[index])).join(''));
         });
 
         mainMenu();
     });
 }
-
 
 // Function to view all employees
 function viewAllEmployees() {
@@ -205,9 +203,6 @@ function viewAllEmployees() {
         mainMenu();
     });
 }
-
-
-
 
 // Function to add an employee
 function addEmployee() {
@@ -464,7 +459,6 @@ function viewDepartmentBudget() {
     });
 }
 
-
 function mainMenu() {
     inquirer.prompt([
         {
@@ -475,10 +469,11 @@ function mainMenu() {
                 'View All Departments',
                 'View All Roles',
                 'View All Employees',
-                'Add Department',
-                'Add Role',
-                'Add Employee',
-                'Update Employee Role',
+                'Update Employee Manager',
+                'View Employees by Manager',
+                'View Employees by Department',
+                'Delete from Database',
+                'View Department Budget',
                 'Exit'
             ]
         }
@@ -493,17 +488,20 @@ function mainMenu() {
             case 'View All Employees':
                 viewAllEmployees();
                 break;
-            case 'Add Department':
-                addDepartment();
+            case 'Update Employee Manager':
+                updateEmployeeManager();
                 break;
-            case 'Add Role':
-                addRole();
+            case 'View Employees by Manager':
+                viewEmployeesByManager();
                 break;
-            case 'Add Employee':
-                addEmployee();
+            case 'View Employees by Department':
+                viewEmployeesByDepartment();
                 break;
-            case 'Update Employee Role':
-                updateEmployeeRole();
+            case 'Delete from Database':
+                deleteFromDatabase();
+                break;
+            case 'View Department Budget':
+                viewDepartmentBudget();
                 break;
             case 'Exit':
                 connection.end();
@@ -511,4 +509,3 @@ function mainMenu() {
         }
     });
 }
-
