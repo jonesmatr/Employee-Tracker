@@ -11,6 +11,25 @@ const connection = mysql.createConnection({
     user: 'root',
     database: 'employee_tracker' 
 });
+
+// ... Your other imports and setups ...
+
+// Display the ASCII representation
+console.log(`
+  ______                 _                       
+ |  ____|               | |                      
+ | |__   _ __ ___  _ __ | | ___  _   _  ___  ___ 
+ |  __| | '_ \` _ \\| '_ \\| |/ _ \\| | | |/ _ \\/ _ \\
+ | |____| | | | | | |_) | | (_) | |_| |  __/  __/
+ |______|_| |_| |_| .__/|_|\\___/ \\__, |\\___|\\___|
+ |  \\/  |         | |             __/ |          
+ | \\  / | __ _ _ _|_| __ _  __ _ |___/_ __       
+ | |\\/| |/ _\` | '_ \\ / _\` |/ _\` |/ _ \\ '__|      
+ | |  | | (_| | | | | (_| | (_| |  __/ |         
+ |_|  |_|\__,_ |_| |_|\\__,_|\\__, |\\___|_|         
+                            __/ |                
+                           |___/                 
+`);
   
 connection.connect((err) => {
     if (err) throw err;
