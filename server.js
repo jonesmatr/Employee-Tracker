@@ -4,7 +4,7 @@ const inquirer = require('inquirer');
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    database: 'employee_tracker' // Replace this with your actual database name
+    database: 'employee_tracker' 
 });
   
 connection.connect((err) => {
@@ -90,7 +90,14 @@ function viewAllRoles() {
     `;
     connection.query(query, (err, results) => {
         if (err) throw err;
-        console.table(results);
+       // Header
+       console.log('ID\tTitle\t\tSalary\tDepartment');
+       console.log('----------------------------------------');
+
+       // Data
+       results.forEach(result => {
+           console.log(`${result.id}\t${result.title}\t${result.salary}\t${result.department}`);
+       });
         // Return to main menu or exit
         mainMenu();
     });
@@ -114,11 +121,45 @@ function viewAllEmployees() {
     `;
     connection.query(query, (err, results) => {
         if (err) throw err;
-        console.table(results);
-        // Return to main menu or exit
+
+        // Define headers
+        const headers = ['ID', 'First Name', 'Last Name', 'Role', 'Department', 'Salary', 'Manager'];
+
+        // Find the maximum width for each column
+        const colWidths = headers.map((header, index) => {
+            // Get maximum length of data in this column
+            const maxDataLength = Math.max(...results.map(result => String(result[header.toLowerCase().replace(' ', '_')]).length));
+            return Math.max(header.length, maxDataLength) + 2;  // Add 2 for a bit of padding
+        });
+
+        // Helper function to pad strings for display
+        const padString = (str, length) => str + ' '.repeat(length - str.length);
+
+        // Display headers
+        console.log(headers.map((header, index) => padString(header, colWidths[index])).join(''));
+
+        // Display line under headers
+        console.log(colWidths.map(width => '-'.repeat(width)).join(''));
+
+        // Display data
+        results.forEach(result => {
+            const row = [
+                result.id,
+                result.first_name,
+                result.last_name,
+                result.role,
+                result.department,
+                result.salary,
+                result.manager || 'None'
+            ];
+            console.log(row.map((item, index) => padString(String(item), colWidths[index])).join(''));
+        });
+
         mainMenu();
     });
 }
+
+
 
 // Function to add an employee
 function addEmployee() {
