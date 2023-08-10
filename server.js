@@ -465,7 +465,27 @@ function deleteRole() {
 }
 
 function deleteEmployee() {
-    // Implement the functionality here
+    connection.query('SELECT * FROM employee', (err, employees) => {
+        if (err) throw err;
+
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'employeeId',
+                message: 'Which employee would you like to delete?',
+                choices: employees.map(employee => ({
+                    name: `${employee.first_name} ${employee.last_name}`,
+                    value: employee.id
+                }))
+            }
+        ]).then(answer => {
+            connection.query('DELETE FROM employee WHERE id = ?', [answer.employeeId], (err, result) => {
+                if (err) throw err;
+                console.log('Employee deleted successfully!');
+                mainMenu();
+            });
+        });
+    });
 }
 
 function viewDepartmentBudget() {
