@@ -4,7 +4,7 @@ const inquirer = require('inquirer');
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    database: 'your_database_name' // Replace this with your actual database name
+    database: 'employee_tracker' // Replace this with your actual database name
 });
   
 connection.connect((err) => {

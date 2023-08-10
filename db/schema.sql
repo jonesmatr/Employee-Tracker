@@ -1,4 +1,10 @@
 
+-- Create the database
+CREATE DATABASE employee_tracker;
+
+-- Use the database
+USE employee_tracker;
+
 -- Create department table
 CREATE TABLE department (
     id INT AUTO_INCREMENT PRIMARY KEY,
