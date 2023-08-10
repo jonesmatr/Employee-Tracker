@@ -417,8 +417,29 @@ function deleteFromDatabase() {
 }
 
 function deleteDepartment() {
-    // Implement the functionality here
+    connection.query('SELECT * FROM department', (err, departments) => {
+        if (err) throw err;
+
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'departmentId',
+                message: 'Which department would you like to delete?',
+                choices: departments.map(department => ({
+                    name: department.name,
+                    value: department.id
+                }))
+            }
+        ]).then(answer => {
+            connection.query('DELETE FROM department WHERE id = ?', [answer.departmentId], (err, result) => {
+                if (err) throw err;
+                console.log('Department deleted successfully!');
+                mainMenu();
+            });
+        });
+    });
 }
+
 
 function deleteRole() {
     // Implement the functionality here
