@@ -335,41 +335,6 @@ function updateEmployeeManager() {
     });
 }
 
-function updateEmployeeManager() {
-    // First, we need to get a list of employees
-    connection.query('SELECT id, CONCAT(first_name, " ", last_name) AS name FROM employee', (err, employees) => {
-        if (err) throw err;
-
-        inquirer.prompt([
-            {
-                type: 'list',
-                name: 'employeeId',
-                message: 'Which employee\'s manager do you want to update?',
-                choices: employees.map(employee => ({
-                    name: employee.name,
-                    value: employee.id
-                }))
-            },
-            {
-                type: 'list',
-                name: 'managerId',
-                message: 'Who is the employee\'s new manager?',
-                choices: employees.map(employee => ({
-                    name: employee.name,
-                    value: employee.id
-                })).concat({ name: "None", value: null })  // Allow setting no manager
-            }
-        ]).then(answers => {
-            connection.query('UPDATE employee SET manager_id = ? WHERE id = ?', [answers.managerId, answers.employeeId], (err) => {
-                if (err) throw err;
-                console.log('Updated employee\'s manager.');
-                mainMenu();
-            });
-        });
-    });
-}
-
-
 function viewEmployeesByManager() {
     // First, we need to get a list of managers
     connection.query('SELECT DISTINCT manager_id, CONCAT(m.first_name, " ", m.last_name) AS manager_name FROM employee e JOIN employee m ON e.manager_id = m.id WHERE manager_id IS NOT NULL', (err, managers) => {
@@ -387,6 +352,38 @@ function viewEmployeesByManager() {
             }
         ]).then(answer => {
             connection.query('SELECT id, first_name, last_name, role_id FROM employee WHERE manager_id = ?', [answer.managerId], (err, employees) => {
+                if (err) throw err;
+                console.table(employees);
+                mainMenu();
+            });
+        });
+    });
+}
+
+function viewEmployeesByDepartment() {
+    // First, we get a list of departments
+    connection.query('SELECT id, name FROM department', (err, departments) => {
+        if (err) throw err;
+
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'departmentId',
+                message: 'Which department\'s employees do you want to view?',
+                choices: departments.map(dept => ({
+                    name: dept.name,
+                    value: dept.id
+                }))
+            }
+        ]).then(answer => {
+            const query = `
+                SELECT e.id, e.first_name, e.last_name, r.title 
+                FROM employee e
+                JOIN role r ON e.role_id = r.id
+                WHERE r.department_id = ?
+            `;
+
+            connection.query(query, [answer.departmentId], (err, employees) => {
                 if (err) throw err;
                 console.table(employees);
                 mainMenu();
