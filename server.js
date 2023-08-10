@@ -335,6 +335,31 @@ function updateEmployeeManager() {
     });
 }
 
+function viewEmployeesByManager() {
+    // First, we need to get a list of managers
+    connection.query('SELECT DISTINCT manager_id, CONCAT(m.first_name, " ", m.last_name) AS manager_name FROM employee e JOIN employee m ON e.manager_id = m.id WHERE manager_id IS NOT NULL', (err, managers) => {
+        if (err) throw err;
+
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'managerId',
+                message: 'Which manager\'s employees do you want to view?',
+                choices: managers.map(manager => ({
+                    name: manager.manager_name,
+                    value: manager.manager_id
+                }))
+            }
+        ]).then(answer => {
+            connection.query('SELECT id, first_name, last_name, role_id FROM employee WHERE manager_id = ?', [answer.managerId], (err, employees) => {
+                if (err) throw err;
+                console.table(employees);
+                mainMenu();
+            });
+        });
+    });
+}
+
 
 function mainMenu() {
     inquirer.prompt([
