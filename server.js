@@ -12,8 +12,6 @@ const connection = mysql.createConnection({
     database: 'employee_tracker'
 });
 
-// ... Your other imports and setups ...
-
 // Display the ASCII representation
 console.log(`
   ______                 _                       
@@ -526,10 +524,14 @@ function mainMenu() {
             name: 'choice',
             message: 'What would you like to do?',
             choices: [
-                'View All Departments',
-                'View All Roles',
                 'View All Employees',
-                'Update Employee Manager',
+                'Add Employee',
+                'Update Employee Role',
+                'View All Roles',
+                'Add Role',
+                'View All Departments', 
+                'Add Department',              
+                'Update Employee Manager',               
                 'View Employees by Manager',
                 'View Employees by Department',
                 'Delete from Database',
@@ -548,8 +550,20 @@ function mainMenu() {
             case 'View All Employees':
                 viewAllEmployees();
                 break;
+            case 'Update Employee Role':
+                updateEmployeeRole();
+                break;
             case 'Update Employee Manager':
                 updateEmployeeManager();
+                break;                
+            case 'Add Role':
+                addRole();
+                break;
+            case 'Add Employee':
+                addEmployee();
+                break;
+            case 'Add Department':
+                addDepartment();
                 break;
             case 'View Employees by Manager':
                 viewEmployeesByManager();
