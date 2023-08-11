@@ -344,14 +344,49 @@ function viewEmployeesByManager() {
                 }))
             }
         ]).then(answer => {
-            connection.query('SELECT id, first_name, last_name, role_id FROM employee WHERE manager_id = ?', [answer.managerId], (err, employees) => {
+            const query = `
+                SELECT e.id, e.first_name, e.last_name, r.title 
+                FROM employee e
+                JOIN role r ON e.role_id = r.id
+                WHERE e.manager_id = ?
+            `;
+
+            connection.query(query, [answer.managerId], (err, employees) => {
                 if (err) throw err;
-                console.table(employees);
+
+                const headers = ['ID', 'First Name', 'Last Name', 'Title'];
+
+                // Calculate column widths
+                const colWidths = headers.map((header, index) => {
+                    const headerLength = header.length;
+
+                    const maxDataLength = employees.reduce((max, employee) => {
+                        const field = header.toLowerCase().replace(' ', '_');
+                        return Math.max(max, String(employee[field]).length);
+                    }, 0);
+
+                    return Math.max(headerLength, maxDataLength) + 2;  // Add 2 for padding
+                });
+
+                console.log(headers.map((header, index) => padString(header, colWidths[index])).join(' '));
+                console.log(colWidths.map(width => '-'.repeat(width)).join(' '));
+
+                employees.forEach(employee => {
+                    const row = [
+                        employee.id,
+                        employee.first_name,
+                        employee.last_name,
+                        employee.title
+                    ];
+                    console.log(row.map((item, index) => padString(String(item), colWidths[index])).join(' '));
+                });
+
                 mainMenu();
             });
         });
     });
 }
+
 
 function viewEmployeesByDepartment() {
     // First, we get a list of departments
@@ -378,7 +413,34 @@ function viewEmployeesByDepartment() {
 
             connection.query(query, [answer.departmentId], (err, employees) => {
                 if (err) throw err;
-                console.table(employees);
+
+                const headers = ['ID', 'First Name', 'Last Name', 'Title'];
+
+                // Calculate column widths
+                const colWidths = headers.map((header, index) => {
+                    const headerLength = header.length;
+
+                    const maxDataLength = employees.reduce((max, employee) => {
+                        const field = header.toLowerCase().replace(' ', '_');
+                        return Math.max(max, String(employee[field]).length);
+                    }, 0);
+
+                    return Math.max(headerLength, maxDataLength) + 2;  // Add 2 for padding
+                });
+
+                console.log(headers.map((header, index) => padString(header, colWidths[index])).join(' '));
+                console.log(colWidths.map(width => '-'.repeat(width)).join(' '));
+
+                employees.forEach(employee => {
+                    const row = [
+                        employee.id,
+                        employee.first_name,
+                        employee.last_name,
+                        employee.title
+                    ];
+                    console.log(row.map((item, index) => padString(String(item), colWidths[index])).join(' '));
+                });
+
                 mainMenu();
             });
         });
@@ -583,3 +645,5 @@ function mainMenu() {
         }
     });
 }
+
+// Need to change the bonus functions to look like the rest of the functions. May need to change the what information is shown as well.
