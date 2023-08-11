@@ -13,10 +13,6 @@ The walkthrough video can be accessed [here](https://drive.google.com/file/d/1Z8
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [License](#license)
-- [Contributing](#contributing)
-- [Tests](#tests)
-- [Questions](#questions)
 
 ## Installation
 
