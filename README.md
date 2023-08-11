@@ -16,13 +16,25 @@ The walkthrough video can be accessed [here](https://drive.google.com/file/d/1Z8
 
 ## Installation
 
-To install the necessary dependencies, run the following command:
+To install the necessary dependencies, you'll first need to clone the repository. Navigate to the directory where you've cloned it and run the following command:
 
-\```
+```
 npm install
-\```
+```
 
-Make sure to set up the MySQL database using the provided schema and seeds files.
+This project requires two npm packages:
+
+1. `inquirer` - This will prompt the user for inputs from the command line.
+2. `mysql2` - This will enable interaction with the MySQL database.
+
+To install these packages, use the following commands:
+
+```
+npm install inquirer
+npm install mysql2
+```
+
+After installing the dependencies, you'll need to set up the database. Navigate to the MySQL shell and execute the commands found in the `schema.sql` file, followed by the `seeds.sql` file.
 
 ## Usage
 
