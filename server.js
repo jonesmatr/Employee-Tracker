@@ -1,18 +1,22 @@
+// Required packages/modules
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 
+// Utility function to pad strings for table display
 const padString = (str, length) => str + ' '.repeat(length - str.length);
+// Utility function to create dashed lines for table display
 const createDashedLine = (colWidths) => {
     return colWidths.map(width => '-'.repeat(width - 1)).join(' ');
 };
 
+// Set up MySQL connection
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     database: 'employee_tracker'
 });
 
-// Display the ASCII representation
+// Display a welcome message
 console.log(`
   ______                 _                       
  |  ____|               | |                      
@@ -29,10 +33,11 @@ console.log(`
                            |___/                 
 `);
 
+// Connect to the database
 connection.connect((err) => {
     if (err) throw err;
     console.log('Connected to the database.');
-    mainMenu();  // Call the main menu function after connecting
+    mainMenu();  // Display the main menu once connected
 });
 
 // Function to view all departments
@@ -294,6 +299,7 @@ function updateEmployeeRole() {
     });
 }
 
+// Function to update an employee's manager
 function updateEmployeeManager() {
     // First, we need to get a list of employees
     connection.query('SELECT id, CONCAT(first_name, " ", last_name) AS name FROM employee', (err, employees) => {
@@ -328,6 +334,7 @@ function updateEmployeeManager() {
     });
 }
 
+// Function to view all employees by manager
 function viewEmployeesByManager() {
     // First, we need to get a list of managers
     connection.query('SELECT DISTINCT e.manager_id, CONCAT(m.first_name, " ", m.last_name) AS manager_name FROM employee e JOIN employee m ON e.manager_id = m.id WHERE e.manager_id IS NOT NULL', (err, managers) => {
@@ -378,7 +385,7 @@ function viewEmployeesByManager() {
                         employee.last_name,
                         employee.title
                     ];
-                    console.log(row.map((item, index) => padString(String(item), colWidths[index])).join(' '));
+                    console.log(row.map((item, index) => padString(String(item), colWidths[index])).join(' ')); // Print each row
                 });
 
                 mainMenu();
@@ -387,7 +394,7 @@ function viewEmployeesByManager() {
     });
 }
 
-
+// Function to view all employees by department
 function viewEmployeesByDepartment() {
     // First, we get a list of departments
     connection.query('SELECT id, name FROM department', (err, departments) => {
@@ -411,7 +418,7 @@ function viewEmployeesByDepartment() {
                 WHERE r.department_id = ?
             `;
 
-            connection.query(query, [answer.departmentId], (err, employees) => {
+            connection.query(query, [answer.departmentId], (err, employees) => { // Get all employees by department
                 if (err) throw err;
 
                 const headers = ['ID', 'First Name', 'Last Name', 'Title'];
@@ -447,6 +454,7 @@ function viewEmployeesByDepartment() {
     });
 }
 
+// Function to delete an employee
 function deleteFromDatabase() {
     inquirer.prompt([
         {
@@ -476,6 +484,7 @@ function deleteFromDatabase() {
     });
 }
 
+// Functions to delete department from the database
 function deleteDepartment() {
     connection.query('SELECT * FROM department', (err, departments) => {
         if (err) throw err;
@@ -500,6 +509,7 @@ function deleteDepartment() {
     });
 }
 
+// Functions to delete role from the database
 function deleteRole() {
     connection.query('SELECT * FROM role', (err, roles) => {
         if (err) throw err;
@@ -524,6 +534,7 @@ function deleteRole() {
     });
 }
 
+// Functions to delete employee from the database
 function deleteEmployee() {
     connection.query('SELECT * FROM employee', (err, employees) => {
         if (err) throw err;
@@ -548,6 +559,7 @@ function deleteEmployee() {
     });
 }
 
+// Function to view utilized budget for a department
 function viewDepartmentBudget() {
     connection.query('SELECT id, name FROM department', (err, departments) => {
         if (err) throw err;
@@ -579,6 +591,7 @@ function viewDepartmentBudget() {
     });
 }
 
+// Function to run the application 
 function mainMenu() {
     inquirer.prompt([
         {
@@ -591,9 +604,9 @@ function mainMenu() {
                 'Update Employee Role',
                 'View All Roles',
                 'Add Role',
-                'View All Departments', 
-                'Add Department',              
-                'Update Employee Manager',               
+                'View All Departments',
+                'Add Department',
+                'Update Employee Manager',
                 'View Employees by Manager',
                 'View Employees by Department',
                 'Delete from Database',
@@ -617,7 +630,7 @@ function mainMenu() {
                 break;
             case 'Update Employee Manager':
                 updateEmployeeManager();
-                break;                
+                break;
             case 'Add Role':
                 addRole();
                 break;
@@ -645,5 +658,3 @@ function mainMenu() {
         }
     });
 }
-
-// Need to change the bonus functions to look like the rest of the functions. May need to change the what information is shown as well.
